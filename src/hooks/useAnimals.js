@@ -20,12 +20,39 @@ export function useAnimals() {
 
         return unsubscribe;
     }, []);
-    const updateAnimal = (id, updates) => {
-        setAnimals(prev => prev.map(a => a.id === id ? { ...a, ...updates, updatedAt: new Date().toISOString() } : a));
+    const addAnimal = async (animalData) => {
+        try {
+            const newAnimal = {
+                ...animalData,
+                createdAt: new Date().toISOString()
+            };
+            await addDoc(collection(db, 'animals'), newAnimal);
+        } catch (error) {
+            console.error("Error adding animal: ", error);
+            alert("Tier konnte nicht gespeichert werden: " + error.message);
+        }
     };
 
-    const deleteAnimal = (id) => {
-        setAnimals(prev => prev.filter(a => a.id !== id));
+    const updateAnimal = async (id, updates) => {
+        try {
+            const animalRef = doc(db, 'animals', id);
+            await updateDoc(animalRef, {
+                ...updates,
+                updatedAt: new Date().toISOString()
+            });
+        } catch (error) {
+            console.error("Error updating animal: ", error);
+            alert("Status konnte nicht geändert werden: " + error.message);
+        }
+    };
+
+    const deleteAnimal = async (id) => {
+        try {
+            await deleteDoc(doc(db, 'animals', id));
+        } catch (error) {
+            console.error("Error deleting animal: ", error);
+            alert("Tier konnte nicht gelöscht werden: " + error.message);
+        }
     };
 
     return { animals, addAnimal, updateAnimal, deleteAnimal };
