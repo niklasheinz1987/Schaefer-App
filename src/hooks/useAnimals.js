@@ -1,36 +1,22 @@
+```javascript
 import { useState, useEffect } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid'; // This might become unnecessary if using Firestore IDs
 
-const STORAGE_KEY = 'schaefer_animals_v1';
+// Assuming 'db' is imported from your Firebase configuration
+// import { db } from './firebaseConfig'; // You'll need to add your Firebase config
+import { collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
+
+// Placeholder for db if not provided in the original context.
+// In a real application, 'db' would be initialized from your Firebase config.
+const db = {}; // This needs to be replaced with your actual Firestore instance
+
+const STORAGE_KEY = 'schaefer_animals_v1'; // This will become obsolete if moving to Firestore
 
 export function useAnimals() {
-    const [animals, setAnimals] = useState(() => {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-            try {
-                return JSON.parse(saved);
-            } catch (e) {
-                console.error('Failed to parse animals from local storage', e);
-                return [];
-            }
-        }
-        return [];
-    });
+    const [animals, setAnimals] = useState([]); // Initialize as empty, data will come from Firestore
 
+    // This useEffect will now handle the Firestore subscription
     useEffect(() => {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(animals));
-    }, [animals]);
-
-    const addAnimal = (animalData) => {
-        const newAnimal = {
-            ...animalData,
-            id: uuidv4(),
-            createdAt: new Date().toISOString()
-        };
-        setAnimals(prev => [...prev, newAnimal]);
-        return newAnimal.id;
-    };
-
     const updateAnimal = (id, updates) => {
         setAnimals(prev => prev.map(a => a.id === id ? { ...a, ...updates, updatedAt: new Date().toISOString() } : a));
     };
