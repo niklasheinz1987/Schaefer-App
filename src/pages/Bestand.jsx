@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useAnimals } from '../hooks/useAnimals';
+import { useNavigate } from 'react-router-dom';
 import { Search, Filter, Trash2, Edit } from 'lucide-react';
 
 const Bestand = () => {
     const { animals, deleteAnimal, updateAnimal } = useAnimals();
+    const navigate = useNavigate();
     const [filterArt, setFilterArt] = useState('Alle');
     const [filterStatus, setFilterStatus] = useState('Aktiv');
     const [searchTerm, setSearchTerm] = useState('');
@@ -122,9 +124,14 @@ const Bestand = () => {
                                         </select>
                                     </td>
                                     <td style={{ padding: '1rem', textAlign: 'right' }} className="no-print">
-                                        <button onClick={() => handleDelete(animal.id)} className="btn btn-danger" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }}>
-                                            <Trash2 size={16} />
-                                        </button>
+                                        <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                                            <button onClick={() => navigate(`/tier-bearbeiten/${animal.id}`)} className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="Bearbeiten">
+                                                <Edit size={16} />
+                                            </button>
+                                            <button onClick={() => handleDelete(animal.id)} className="btn btn-danger" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="Löschen">
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))
